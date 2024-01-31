@@ -8,6 +8,7 @@ namespace AllureToCsvConverter
 {
     public class Config
     {
+        //
 
         IniFile INI;
 
