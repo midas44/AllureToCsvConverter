@@ -24,11 +24,6 @@ namespace AllureToCsvConverter
 
             altDivider = ";";
 
-            //lineDivider = "\n";
-
-            lineDivider = " | "; //debug
-
-
             data = JsonConvert.DeserializeObject(jsonString);
         }
 
@@ -263,8 +258,6 @@ namespace AllureToCsvConverter
 
             return result;
         }
-
-
 
     }
 }

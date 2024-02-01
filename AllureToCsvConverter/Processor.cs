@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace AllureToCsvConverter
 {
     public class Processor
     {
-
         public List<string> allureData;
 
         public List<string> sourceFields;
@@ -21,9 +21,13 @@ namespace AllureToCsvConverter
 
         public List<string> exportData;
 
+        Config config;
 
-        public Processor()
+
+        public Processor(Config config)
         {
+            this.config = config;
+
             sourceFields = new();
 
             targetFields = new();
@@ -38,9 +42,7 @@ namespace AllureToCsvConverter
 
             divider = ",";
 
-            const char LF = '\n';
-            lineDivider = " ";
-            lineDivider.Append(LF);
+            lineDivider = "<br/>";
         }
 
 
@@ -256,26 +258,112 @@ namespace AllureToCsvConverter
                 }
                 header = true;
             }
+
+            mergeColumns();
         }
 
 
-        public void megreForGDoc()
+        private void mergeColumns()
         {
+            if (config.outputFormat == "q")
+            {
+                mergeTitle("description");
+            }
 
+            if (config.outputFormat == "g")
+            {
+
+            }
         }
 
 
-        public void megreForQase()
+        public void mergeTitle(string mergeTitle)
         {
+            string mergeSubTitle = mergeTitle + "_";
 
+            int n = exportData[0].Split(divider).Length;
+
+            List<string>[] columns = new List<string>[n];
+
+            for(int i=0; i<n; i++)
+            {
+                columns[i] = new List<string>();
+            }
+
+            foreach (string line in exportData)
+            {
+                string[] fields = line.Split(divider);
+
+                int l = 0;
+                foreach (string field in fields)
+                {
+                    columns[l].Add(field);
+                    l++;
+                }              
+            }
+
+            List<List<string>> newColumns = new();
+
+            int index = -1;
+
+            int j = 0;
+            foreach (var column in columns)
+            {
+                if(column[0] == mergeTitle)
+                {
+                    index = j; 
+                }
+                j++;
+            }
+
+            int m = columns.Length;
+
+            foreach (var column in columns)
+            {
+                if (column[0].StartsWith(mergeSubTitle))
+                {
+                    string subTitle = column[0].Replace(mergeSubTitle, "");
+
+                    for (int k = 1; k<m; k++)
+                    {
+                        if (k < column.Count) 
+                        {
+                            columns[index][k] += lineDivider + subTitle + " " + column[k]; 
+                        }                                          
+                    }
+                }
+            }
+
+            foreach (var column in columns)
+            {
+                if (!column[0].StartsWith(mergeSubTitle))
+                {
+                    if (column[0].Trim().Length != 0)
+                    {
+                        newColumns.Add(column);
+                    }                   
+                }
+            }
+
+            exportData.Clear();
+
+            int h = newColumns[0].Count;
+
+
+            for(int ii = 0; ii<h; ii++)
+            {
+                string line = "";
+
+                foreach (var nc in newColumns)
+                {
+                    line += nc[ii].ToString() + divider;
+                }
+
+                //line = line.Trim() + endOfLineDivider;
+
+                exportData.Add(line);
+            }
         }
-
-
-        private void mergeColumns(string prefix)
-        {
-
-        }
-
 
 
         public List<string> getQaseFields()
@@ -532,12 +620,5 @@ namespace AllureToCsvConverter
 
         }
 
-
-
-    }
-
-
-
-
-    
+    }   
 }

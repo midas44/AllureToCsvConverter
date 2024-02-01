@@ -8,8 +8,6 @@ namespace AllureToCsvConverter
 {
     public class Config
     {
-        //
-
         IniFile INI;
 
         //App
@@ -24,7 +22,6 @@ namespace AllureToCsvConverter
         public string outputPath;
 
         public string outputFilename;
-
 
 
         public Config()
@@ -54,7 +51,6 @@ namespace AllureToCsvConverter
             {
                 outputFormat = outputFormat.Substring(0);
             }
-
 
             //Paths
 

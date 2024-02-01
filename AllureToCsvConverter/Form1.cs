@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using static System.Windows.Forms.LinkLabel;
 
 namespace AllureToCsvConverter
 {
@@ -20,9 +21,9 @@ namespace AllureToCsvConverter
 
             form1 = this;
 
-            proc = new();
+            config = new();
 
-            config = new Config();
+            proc = new(config);
 
             setMode();
 
@@ -95,11 +96,9 @@ namespace AllureToCsvConverter
             string dir = textBoxCsvPath.Text.Trim();
             System.IO.Directory.CreateDirectory(dir);
 
-
             string path = dir + "\\" + textBoxCsvFilename.Text.Trim();
 
             saveFile(path);
-
         }
 
 
@@ -130,8 +129,7 @@ namespace AllureToCsvConverter
 
 
         public void addLog(string s)
-        {
-          
+        {        
             if (config.mode == "s")
             {
                 return;
@@ -159,13 +157,16 @@ namespace AllureToCsvConverter
             addLog("GDoc format is set");
             proc.arrangeFieldsForGDoc();
             outputFields();
+            config.outputFormat = "g";
         }
+
 
         private void setQase()
         {
             addLog("Qase format is set");
             proc.arrangeFieldsForQase();
             outputFields();
+            config.outputFormat = "q";
         }
 
 
@@ -179,6 +180,7 @@ namespace AllureToCsvConverter
         {
             setQase();
         }
+
 
         private void outputFields()
         {
@@ -215,6 +217,7 @@ namespace AllureToCsvConverter
 
             return fields;
         }
+
 
         private void convert()
         {
@@ -262,16 +265,20 @@ namespace AllureToCsvConverter
             }
         }
 
+
         private void saveFile(string path)
         {
 
   
             using (TextWriter fileTW = new StreamWriter(path))
             {
-                fileTW.NewLine = "\n"; //LF!!!
+                fileTW.NewLine = "\n";
+
                 foreach (string line in proc.exportData)
                 {
-                    fileTW.WriteLine(line);
+                    string line1 = line.Remove(line.Length - 1);
+
+                    fileTW.WriteLine(line1);
                 }
             }
             addLog("Saved to file: " + path);
@@ -416,7 +423,6 @@ namespace AllureToCsvConverter
                 addLog("incorrect dir is selected!");
             }
         }
-
 
     }
 }
