@@ -38,12 +38,17 @@
             folderBrowserDialog1 = new FolderBrowserDialog();
             saveFileDialog1 = new SaveFileDialog();
             panelA = new Panel();
+            buttonGDocProcess = new Button();
+            label5 = new Label();
+            textBoxParentSuiteId = new TextBox();
+            label4 = new Label();
+            textBoxParentSuiteName = new TextBox();
             label3 = new Label();
             textBoxCsvFilename = new TextBox();
             outputPathButton = new Button();
             inputPathButton = new Button();
             mode_button = new Button();
-            processButton = new Button();
+            buttonQaseProcess = new Button();
             label2 = new Label();
             textBoxCsvPath = new TextBox();
             label1 = new Label();
@@ -67,9 +72,9 @@
             panelB.Controls.Add(buttonSetQase);
             panelB.Controls.Add(buttonSetGDoc);
             panelB.Controls.Add(buttonLoad);
-            panelB.Location = new Point(12, 347);
+            panelB.Location = new Point(3, 480);
             panelB.Name = "panelB";
-            panelB.Size = new Size(1322, 137);
+            panelB.Size = new Size(1323, 137);
             panelB.TabIndex = 0;
             // 
             // buttonHelp
@@ -108,7 +113,7 @@
             // buttonSetQase
             // 
             buttonSetQase.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            buttonSetQase.Location = new Point(295, 56);
+            buttonSetQase.Location = new Point(357, 19);
             buttonSetQase.Name = "buttonSetQase";
             buttonSetQase.Size = new Size(315, 34);
             buttonSetQase.TabIndex = 5;
@@ -119,7 +124,7 @@
             // buttonSetGDoc
             // 
             buttonSetGDoc.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            buttonSetGDoc.Location = new Point(295, 16);
+            buttonSetGDoc.Location = new Point(252, 77);
             buttonSetGDoc.Name = "buttonSetGDoc";
             buttonSetGDoc.Size = new Size(315, 34);
             buttonSetGDoc.TabIndex = 4;
@@ -140,20 +145,73 @@
             // 
             // panelA
             // 
+            panelA.Controls.Add(buttonGDocProcess);
+            panelA.Controls.Add(label5);
+            panelA.Controls.Add(textBoxParentSuiteId);
+            panelA.Controls.Add(label4);
+            panelA.Controls.Add(textBoxParentSuiteName);
             panelA.Controls.Add(label3);
             panelA.Controls.Add(textBoxCsvFilename);
             panelA.Controls.Add(outputPathButton);
             panelA.Controls.Add(inputPathButton);
             panelA.Controls.Add(mode_button);
-            panelA.Controls.Add(processButton);
+            panelA.Controls.Add(buttonQaseProcess);
             panelA.Controls.Add(label2);
             panelA.Controls.Add(textBoxCsvPath);
             panelA.Controls.Add(label1);
             panelA.Controls.Add(textBoxAllurePath);
-            panelA.Location = new Point(12, 12);
+            panelA.Location = new Point(3, 12);
             panelA.Name = "panelA";
-            panelA.Size = new Size(1322, 329);
+            panelA.Size = new Size(1323, 462);
             panelA.TabIndex = 6;
+            // 
+            // buttonGDocProcess
+            // 
+            buttonGDocProcess.Location = new Point(751, 414);
+            buttonGDocProcess.Name = "buttonGDocProcess";
+            buttonGDocProcess.Size = new Size(428, 34);
+            buttonGDocProcess.TabIndex = 26;
+            buttonGDocProcess.Text = "Convert Allure -> GDoc CSV";
+            buttonGDocProcess.UseVisualStyleBackColor = true;
+            buttonGDocProcess.Click += buttonGDocProcess_Click;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label5.Location = new Point(395, 264);
+            label5.Name = "label5";
+            label5.Size = new Size(365, 23);
+            label5.TabIndex = 25;
+            label5.Text = "[Qase] Parent Suite id (>=2000 recommended)";
+            // 
+            // textBoxParentSuiteId
+            // 
+            textBoxParentSuiteId.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            textBoxParentSuiteId.Location = new Point(395, 303);
+            textBoxParentSuiteId.Name = "textBoxParentSuiteId";
+            textBoxParentSuiteId.Size = new Size(250, 30);
+            textBoxParentSuiteId.TabIndex = 24;
+            textBoxParentSuiteId.Text = "2000";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label4.Location = new Point(16, 264);
+            label4.Name = "label4";
+            label4.Size = new Size(206, 23);
+            label4.TabIndex = 23;
+            label4.Text = "[Qase] Parent Suite Name";
+            // 
+            // textBoxParentSuiteName
+            // 
+            textBoxParentSuiteName.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            textBoxParentSuiteName.Location = new Point(16, 303);
+            textBoxParentSuiteName.Name = "textBoxParentSuiteName";
+            textBoxParentSuiteName.Size = new Size(364, 30);
+            textBoxParentSuiteName.TabIndex = 22;
+            textBoxParentSuiteName.Text = "Autotests FE + GB";
             // 
             // label3
             // 
@@ -198,7 +256,7 @@
             // mode_button
             // 
             mode_button.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            mode_button.Location = new Point(15, 275);
+            mode_button.Location = new Point(18, 414);
             mode_button.Name = "mode_button";
             mode_button.Size = new Size(189, 34);
             mode_button.TabIndex = 17;
@@ -206,15 +264,15 @@
             mode_button.UseVisualStyleBackColor = true;
             mode_button.Click += mode_button_Click;
             // 
-            // processButton
+            // buttonQaseProcess
             // 
-            processButton.Location = new Point(867, 275);
-            processButton.Name = "processButton";
-            processButton.Size = new Size(428, 34);
-            processButton.TabIndex = 16;
-            processButton.Text = "Convert Allure -> Qase CSV";
-            processButton.UseVisualStyleBackColor = true;
-            processButton.Click += processButton_Click;
+            buttonQaseProcess.Location = new Point(867, 350);
+            buttonQaseProcess.Name = "buttonQaseProcess";
+            buttonQaseProcess.Size = new Size(428, 34);
+            buttonQaseProcess.TabIndex = 16;
+            buttonQaseProcess.Text = "Convert Allure -> Qase CSV";
+            buttonQaseProcess.UseVisualStyleBackColor = true;
+            buttonQaseProcess.Click += buttonQaseProcess_Click;
             // 
             // label2
             // 
@@ -255,9 +313,9 @@
             // statusStrip1
             // 
             statusStrip1.ImageScalingSize = new Size(20, 20);
-            statusStrip1.Location = new Point(0, 1500);
+            statusStrip1.Location = new Point(0, 1630);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(1341, 22);
+            statusStrip1.Size = new Size(1331, 22);
             statusStrip1.TabIndex = 7;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -266,7 +324,7 @@
             panelC.Controls.Add(textBoxTarget);
             panelC.Controls.Add(textBoxSource);
             panelC.Controls.Add(textBoxLog);
-            panelC.Location = new Point(12, 490);
+            panelC.Location = new Point(3, 623);
             panelC.Name = "panelC";
             panelC.Size = new Size(1323, 1004);
             panelC.TabIndex = 8;
@@ -319,13 +377,13 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             BackColor = SystemColors.ButtonFace;
-            ClientSize = new Size(1341, 1522);
+            ClientSize = new Size(1331, 1652);
             Controls.Add(panelC);
             Controls.Add(statusStrip1);
             Controls.Add(panelA);
             Controls.Add(panelB);
             Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            Location = new Point(1000, 500);
+            Location = new Point(1200, 300);
             Name = "Form1";
             StartPosition = FormStartPosition.Manual;
             Text = "AllureToCsvConverter";
@@ -355,7 +413,7 @@
         private TextBox textBoxCsvPath;
         private Label label1;
         private TextBox textBoxAllurePath;
-        private Button processButton;
+        private Button buttonQaseProcess;
         private Button mode_button;
         private StatusStrip statusStrip1;
         private Button inputPathButton;
@@ -367,5 +425,10 @@
         private TextBox textBoxTarget;
         private TextBox textBoxSource;
         private TextBox textBoxLog;
+        private Button buttonGDocProcess;
+        private Label label5;
+        private TextBox textBoxParentSuiteId;
+        private Label label4;
+        private TextBox textBoxParentSuiteName;
     }
 }

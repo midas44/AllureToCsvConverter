@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 
 namespace AllureToCsvConverter
 {
@@ -11,6 +12,8 @@ namespace AllureToCsvConverter
 
         public List<string> targetFields;
 
+        public List<string> targetMergedFields;
+
         public List<List<string>> parsedAllureData;
 
         public List<string> parsedHeader;
@@ -20,6 +23,8 @@ namespace AllureToCsvConverter
         public string lineDivider;
 
         public List<string> exportData;
+
+        List<string> suites;
 
         Config config;
 
@@ -32,6 +37,8 @@ namespace AllureToCsvConverter
 
             targetFields = new();
 
+            targetMergedFields = new(); 
+
             allureData = new();
 
             parsedAllureData = new();
@@ -39,6 +46,8 @@ namespace AllureToCsvConverter
             parsedHeader = new();
 
             exportData = new();
+
+            suites = new();
 
             divider = ",";
 
@@ -75,6 +84,7 @@ namespace AllureToCsvConverter
         {
             parsedAllureData.Clear();
             parsedHeader.Clear();
+            suites.Clear();
 
             bool header = false;
             foreach (string json in allureData)
@@ -104,6 +114,12 @@ namespace AllureToCsvConverter
 
             List<string> source = getAllureFields();
 
+            int parentSuiteId = int.Parse(Form1.form1.getQaseParentSuiteId());
+
+            Form1.form1.addLog("parentSuiteId = " + parentSuiteId.ToString());
+
+            int suiteId = 0;
+
             foreach (string field in source)
             {
 
@@ -122,7 +138,7 @@ namespace AllureToCsvConverter
                 if (field == "status")
                 {
                     headerRow.Add(field);
-                    contentRow.Add(jsonData.getStatus());
+                    contentRow.Add(jsonData.getStatus(config.outputFormat));
                 }
 
                 if (field == "description")
@@ -170,7 +186,11 @@ namespace AllureToCsvConverter
                 if (field == "suite")
                 {
                     headerRow.Add(field);
-                    contentRow.Add(jsonData.getSuite());
+                    string suite = jsonData.getSuite();
+                    
+                    suiteId = getSuiteId(parentSuiteId, suite);
+
+                    contentRow.Add(suite); // + suiteId.ToString());  ; //DEBUG!!!
                 }
 
                 if (field == "testMethod")
@@ -184,6 +204,25 @@ namespace AllureToCsvConverter
                     headerRow.Add(field);
                     contentRow.Add(jsonData.getSteps());
                 }
+
+                if (field == "automation")
+                {
+                    headerRow.Add(field);
+                    contentRow.Add(jsonData.getAutomationStatus(config.outputFormat));
+                }
+
+                if (field == "suite_id")
+                {
+                    headerRow.Add(field);
+                    contentRow.Add(suiteId.ToString());
+                    Form1.form1.addLog("suiteId = " + suiteId.ToString());
+                }
+
+                if (field == "suite_parent_id")
+                {
+                    headerRow.Add(field);
+                    contentRow.Add(parentSuiteId.ToString());
+                }
             }
 
             result[0] = headerRow;
@@ -192,6 +231,32 @@ namespace AllureToCsvConverter
             return result;
         }
 
+        private int getSuiteId(int parentId, string newSuite)
+        {
+            int suiteIndex = -1;
+
+            int i = 0;
+            foreach (string suite in suites)
+            {
+                if (suite == newSuite)
+                {
+                    suiteIndex = i;
+                }
+                i++;
+            }
+
+            if (suiteIndex < 0)
+            {
+                suites.Add(newSuite);
+                suiteIndex = suites.Count - 1;
+            }
+
+            int suiteId = parentId + suiteIndex + 1;
+
+            //Form1.form1.addLog(newSuite + " suiteId = " + suiteId.ToString());
+
+            return suiteId;
+        }
 
 
         public void convert()
@@ -210,6 +275,7 @@ namespace AllureToCsvConverter
             int[] indexes = new int[n];
 
             bool header = false;
+
 
             foreach (var data in parsedAllureData) //testcases
             {
@@ -260,6 +326,55 @@ namespace AllureToCsvConverter
             }
 
             mergeColumns();
+
+            if (config.outputFormat == "q")
+            {
+                List<string> e = new();
+                e.Add(exportData[0]);
+                e.Add(generateQaseParentSuite());
+
+                int a = 0;
+                foreach(string s in exportData)
+                {
+                    if (a > 0)
+                    {
+                        e.Add(exportData[a]);
+                    }
+                    a++;
+                }
+                exportData.Clear();
+                exportData.AddRange(e);
+            }
+        }
+
+
+        private string generateQaseParentSuite()
+        {
+            string line = "";
+
+            foreach (string field in targetFields) //header
+            {
+                string value = "";
+
+                if(field == "suite_id")
+                {
+                    value = Form1.form1.getQaseParentSuiteId();
+                }
+
+                if (field == "suite")
+                {
+                    value = Form1.form1.getQaseParentSuiteName();
+                }
+
+                if (field == "suite_without_cases")
+                {
+                    value = "1";
+                }
+
+                line += value + divider;
+            }
+
+            return line;
         }
 
 
@@ -267,7 +382,12 @@ namespace AllureToCsvConverter
         {
             if (config.outputFormat == "q")
             {
+                targetMergedFields.Clear();
+
                 mergeTitle("description");
+
+                targetFields.Clear();
+                targetFields.AddRange(targetMergedFields);            
             }
 
             if (config.outputFormat == "g")
@@ -324,11 +444,13 @@ namespace AllureToCsvConverter
                 {
                     string subTitle = column[0].Replace(mergeSubTitle, "");
 
+                    subTitle = subTitle.ToUpper().Substring(0, 1) + subTitle.Substring(1);
+
                     for (int k = 1; k<m; k++)
                     {
                         if (k < column.Count) 
                         {
-                            columns[index][k] += lineDivider + subTitle + " " + column[k]; 
+                            columns[index][k] += lineDivider + lineDivider + subTitle + lineDivider + column[k]; 
                         }                                          
                     }
                 }
@@ -351,7 +473,7 @@ namespace AllureToCsvConverter
 
 
             for(int ii = 0; ii<h; ii++)
-            {
+            {              
                 string line = "";
 
                 foreach (var nc in newColumns)
@@ -359,9 +481,12 @@ namespace AllureToCsvConverter
                     line += nc[ii].ToString() + divider;
                 }
 
-                //line = line.Trim() + endOfLineDivider;
-
                 exportData.Add(line);
+            }
+
+            foreach (var nc in newColumns)
+            {
+                targetMergedFields.Add(nc[0]);
             }
         }
 
@@ -373,7 +498,8 @@ namespace AllureToCsvConverter
             "title",
             "description",
             "description_autotest",
-            "description_spec",
+            "description_links",
+            "description_steps",
             "preconditions",
             "postconditions",
             "tags",
@@ -428,7 +554,6 @@ namespace AllureToCsvConverter
         public List<string> getAllureFields()
         {
             List<string> fields = new List<string> {
-
             "name",
             "fullName",
             "status",
@@ -440,12 +565,16 @@ namespace AllureToCsvConverter
             "links",
             "feature",
             "suite",
+            "suite_id",
+            "suite_parent_id",
             "testMethod",
             "steps",
-        };
+            "automation",
+            };
 
             return fields;
         }
+
 
         private void resetFields()
         {
@@ -483,7 +612,10 @@ namespace AllureToCsvConverter
                     if (k) break;
 
 
-                    k = compareFields(field1, field2, "description_spec", "links");
+                    k = compareFields(field1, field2, "description_links", "links");
+                    if (k) break;
+
+                    k = compareFields(field1, field2, "description_steps", "steps");
                     if (k) break;
 
                     k = compareFields(field1, field2, "tags", "tags");
@@ -498,14 +630,17 @@ namespace AllureToCsvConverter
                     k = compareFields(field1, field2, "behavior", "story");
                     if (k) break;
 
+                    k = compareFields(field1, field2, "automation", "automation");
+                    if (k) break;
+
                     k = compareFields(field1, field2, "status", "status"); //TODO: replce status value:
                     if (k) break;
 
                     //k = compareFields(field1, field2,  "steps_type", "???");
                     //if (k) break;
 
-                    k = compareFields(field1, field2, "steps_actions", "steps");
-                    if (k) break;
+                    //k = compareFields(field1, field2, "steps_actions", "steps");
+                    //if (k) break;
 
                     //k = compareFields(field1, field2, "steps_result", "???");
                     //if (k) break;
@@ -514,6 +649,12 @@ namespace AllureToCsvConverter
                     //if (k) break;
 
                     k = compareFields(field1, field2, "suite", "suite");
+                    if (k) break;
+
+                    k = compareFields(field1, field2, "suite_id", "suite_id");
+                    if (k) break;
+
+                    k = compareFields(field1, field2, "suite_parent_id", "suite_parent_id");
                     if (k) break;
 
                     index1++;

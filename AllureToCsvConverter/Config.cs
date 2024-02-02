@@ -24,6 +24,12 @@ namespace AllureToCsvConverter
         public string outputFilename;
 
 
+        //Conversion
+        public string qaseParentSuiteName;
+
+        public string qaseParentSuiteId;
+
+
         public Config()
         {
             INI = new IniFile("config.ini");
@@ -58,7 +64,13 @@ namespace AllureToCsvConverter
 
             outputPath = INI.Read("outputPath", "Paths").Trim();
 
-            outputFilename = INI.Read("outputFilename", "Paths").Trim();          
+            outputFilename = INI.Read("outputFilename", "Paths").Trim();
+
+            //Conversion
+
+            qaseParentSuiteId = INI.Read("qaseParentSuiteId", "Conversion").Trim();
+
+            qaseParentSuiteName = INI.Read("qaseParentSuiteName", "Conversion").Trim();
         }
 
 
@@ -78,6 +90,12 @@ namespace AllureToCsvConverter
             INI.Write("outputPath", outputPath, "Paths");
 
             INI.Write("outputFilename", outputFilename, "Paths");
+
+            //Conversion
+
+            INI.Write("qaseParentSuiteName", qaseParentSuiteName, "Conversion");
+
+            INI.Write("qaseParentSuiteId", qaseParentSuiteId, "Conversion");
         }
     }
 }

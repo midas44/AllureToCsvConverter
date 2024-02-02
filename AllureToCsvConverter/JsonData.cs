@@ -24,11 +24,13 @@ namespace AllureToCsvConverter
 
             altDivider = ";";
 
+            lineDivider = "<br/>";
+
             data = JsonConvert.DeserializeObject(jsonString);
         }
 
 
-        private string replaceDiveder(string s)
+        private string replaceDivider(string s)
         {
             return s.Replace(divider, altDivider);
         }
@@ -40,7 +42,7 @@ namespace AllureToCsvConverter
 
             Form1.form1.addLog("parsed: name = " + result);
 
-            result = replaceDiveder(result);
+            result = replaceDivider(result);
 
             return result;
         }
@@ -52,7 +54,7 @@ namespace AllureToCsvConverter
 
             Form1.form1.addLog("parsed: fullName = " + result);
 
-            result = replaceDiveder(result);
+            result = replaceDivider(result);
 
             return result;
         }
@@ -64,19 +66,56 @@ namespace AllureToCsvConverter
 
             Form1.form1.addLog("parsed: description = " + result);
 
-            result = replaceDiveder(result);
+            result = replaceDivider(result);
 
             return result;
         }
 
 
-        public string getStatus()
+        public string getAutomationStatus(string format)
         {
             string result = data.status;
 
             Form1.form1.addLog("parsed: status = " + result);
 
-            result = replaceDiveder(result);
+            result = replaceDivider(result);
+
+            if (format == "q")
+            {
+
+                if (result != "skipped")
+                {
+                    result = "automated";
+                }
+                else
+                {
+                    result = "is-not-automated";
+                }
+            }
+           
+            return result;
+        }
+
+
+        public string getStatus(string format)
+        {
+            string result = data.status;
+
+            Form1.form1.addLog("parsed: status = " + result);
+
+            result = replaceDivider(result);
+
+            if(format == "q")
+            {
+                if (result != "skipped")
+                {
+                    result = "actual";
+                }
+                else
+                {
+                    result = "draft";
+                }
+            }
 
             return result;
         }
@@ -96,7 +135,7 @@ namespace AllureToCsvConverter
 
             Form1.form1.addLog("parsed: epic = " + result);
 
-            result = replaceDiveder(result);
+            result = replaceDivider(result);
 
             return result;
         }
@@ -116,7 +155,7 @@ namespace AllureToCsvConverter
 
             Form1.form1.addLog("parsed: story = " + result);
 
-            result = replaceDiveder(result);
+            result = replaceDivider(result);
 
             return result;
         }
@@ -136,7 +175,7 @@ namespace AllureToCsvConverter
 
             Form1.form1.addLog("parsed: feature = " + result);
 
-            result = replaceDiveder(result);
+            result = replaceDivider(result);
 
             return result;
         }
@@ -156,7 +195,7 @@ namespace AllureToCsvConverter
 
             Form1.form1.addLog("parsed: testMethod = " + result);
 
-            result = replaceDiveder(result);
+            result = replaceDivider(result);
 
             return result;
         }
@@ -176,7 +215,7 @@ namespace AllureToCsvConverter
 
             Form1.form1.addLog("parsed: suite = " + result);
 
-            result = replaceDiveder(result);
+            result = replaceDivider(result);
 
             return result;
         }
@@ -196,7 +235,7 @@ namespace AllureToCsvConverter
 
             Form1.form1.addLog("parsed: epic = " + result);
 
-            result = replaceDiveder(result);
+            result = replaceDivider(result);
 
             return result;
         }
@@ -213,7 +252,7 @@ namespace AllureToCsvConverter
 
             Form1.form1.addLog("parsed: links = " + result);
 
-            result = replaceDiveder(result);
+            result = replaceDivider(result);
 
             return result;
         }
@@ -226,7 +265,7 @@ namespace AllureToCsvConverter
 
             Form1.form1.addLog("parsed: severity = " + result);
 
-            result = replaceDiveder(result);
+            result = replaceDivider(result);
 
             return result;
         }
@@ -240,21 +279,23 @@ namespace AllureToCsvConverter
             {
                 if (data.testStage.ContainsKey("steps"))
                 {
+                    int stepNumber = 0;
                     foreach (var step in data.testStage.steps)
-                    {                      
-                        result += step.name + lineDivider;
+                    {
+                        string stepName = step.name;
+
+                        if (!stepName.ToLower().Contains("selenide") && !stepName.ToLower().Contains("open logout"))
+                        {
+                            stepNumber++;
+                            result += stepNumber.ToString() + ". " + step.name + lineDivider;
+                        } 
                     }
                 }
             }
 
-            if(result.ToLower().Contains("selenide prop"))
-            {
-                return "";
-            }
-
             Form1.form1.addLog("parsed: steps = " + result);
 
-            result = replaceDiveder(result);
+            result = replaceDivider(result);
 
             return result;
         }

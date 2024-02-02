@@ -27,6 +27,10 @@ namespace AllureToCsvConverter
 
             setMode();
 
+            textBoxParentSuiteName.Text = config.qaseParentSuiteName;
+
+            textBoxParentSuiteId.Text = config.qaseParentSuiteId;
+
             string workDir = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
 
 
@@ -62,7 +66,7 @@ namespace AllureToCsvConverter
 
             addLog(" * * * Allure To CSV Converter * * *");
 
-            if(config.mode == "s")
+            if (config.mode == "s")
             {
                 process(config.outputFormat);
 
@@ -70,10 +74,25 @@ namespace AllureToCsvConverter
             }
         }
 
+        public string getQaseParentSuiteName()
+        {
+            return textBoxParentSuiteName.Text.Trim();
+        }
 
-        private void processButton_Click(object sender, EventArgs e)
+        public string getQaseParentSuiteId()
+        {
+            return textBoxParentSuiteId.Text.Trim();
+        }
+
+
+        private void buttonQaseProcess_Click(object sender, EventArgs e)
         {
             process("q");
+        }
+
+        private void buttonGDocProcess_Click(object sender, EventArgs e)
+        {
+            process("g");
         }
 
 
@@ -129,7 +148,7 @@ namespace AllureToCsvConverter
 
 
         public void addLog(string s)
-        {        
+        {
             if (config.mode == "s")
             {
                 return;
@@ -139,7 +158,7 @@ namespace AllureToCsvConverter
             {
                 textBoxLog.AppendText(s + Environment.NewLine);
             }
-            
+
             statusStrip1.Items.Clear();
             statusStrip1.Items.Add(s);
         }
@@ -184,8 +203,8 @@ namespace AllureToCsvConverter
 
         private void outputFields()
         {
-                textBoxSource.Lines = proc.sourceFields.ToArray();
-                textBoxTarget.Lines = proc.targetFields.ToArray();
+            textBoxSource.Lines = proc.sourceFields.ToArray();
+            textBoxTarget.Lines = proc.targetFields.ToArray();
         }
 
 
@@ -269,7 +288,7 @@ namespace AllureToCsvConverter
         private void saveFile(string path)
         {
 
-  
+
             using (TextWriter fileTW = new StreamWriter(path))
             {
                 fileTW.NewLine = "\n";
@@ -330,7 +349,8 @@ namespace AllureToCsvConverter
             panelC.Visible = false;
             panelB.Visible = false;
             panelA.Visible = true;
-            processButton.Visible = true;
+            buttonQaseProcess.Visible = true;
+            buttonGDocProcess.Visible = true;
 
             addLog("Base Mode");
 
@@ -345,11 +365,12 @@ namespace AllureToCsvConverter
             panelC.Visible = true;
             panelB.Visible = true;
             panelA.Visible = true;
-            processButton.Visible = false;
+            buttonQaseProcess.Visible = false;
+            buttonGDocProcess.Visible = false;
 
             addLog("Advanced Mode");
 
-           form1.Height = panelA.Height + panelB.Height + panelC.Height + statusStrip1.Height + 80;
+            form1.Height = panelA.Height + panelB.Height + panelC.Height + statusStrip1.Height + 80;
         }
 
 
@@ -369,6 +390,10 @@ namespace AllureToCsvConverter
         {
             if (config.mode != "s")
             {
+                config.qaseParentSuiteName = textBoxParentSuiteName.Text;
+
+                config.qaseParentSuiteId = textBoxParentSuiteId.Text;
+
                 config.save();
             }
         }
@@ -423,6 +448,7 @@ namespace AllureToCsvConverter
                 addLog("incorrect dir is selected!");
             }
         }
+
 
     }
 }
