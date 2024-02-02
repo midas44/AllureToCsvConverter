@@ -1,1 +1,0 @@
-AllureToCsvConverter.exe

@@ -23,6 +23,10 @@ namespace AllureToCsvConverter
 
         public string outputFilename;
 
+        public string frameworkInputPath;
+
+        public string frameworkOutputPath;
+
 
         //Conversion
         public string qaseParentSuiteName;
@@ -65,6 +69,17 @@ namespace AllureToCsvConverter
             outputPath = INI.Read("outputPath", "Paths").Trim();
 
             outputFilename = INI.Read("outputFilename", "Paths").Trim();
+
+            frameworkInputPath = INI.Read("frameworkInputPath", "Paths").Trim();
+
+            frameworkOutputPath = INI.Read("frameworkOutputPath", "Paths").Trim();
+
+            if (mode == "s")
+            {
+                inputPath = frameworkInputPath;
+
+                outputPath = frameworkOutputPath;
+            }
 
             //Conversion
 
