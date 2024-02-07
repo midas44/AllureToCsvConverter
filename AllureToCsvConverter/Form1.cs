@@ -27,47 +27,61 @@ namespace AllureToCsvConverter
 
             setMode();
 
+            string workDir = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
+
+            textBoxCsvFilename.Text = config.outputFilename;
+
             textBoxParentSuiteName.Text = config.qaseParentSuiteName;
 
             textBoxParentSuiteId.Text = config.qaseParentSuiteId;
 
-            string workDir = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
 
-
-            if (!System.IO.Path.Exists(config.inputPath))
+            if (config.mode != "s")
             {
-                textBoxAllurePath.Text = workDir + "\\input";
-                System.IO.Directory.CreateDirectory(textBoxAllurePath.Text.Trim());
 
-                string s = textBoxAllurePath.Text + "\\allure-report";
-
-                if (System.IO.Path.Exists(s))
+                if (!System.IO.Path.Exists(config.inputPath))
                 {
-                    textBoxAllurePath.Text = s;
+                    textBoxAllurePath.Text = workDir + "\\input";
+                    System.IO.Directory.CreateDirectory(textBoxAllurePath.Text.Trim());
+
+                    string s = textBoxAllurePath.Text + "\\allure-report";
+
+                    if (System.IO.Path.Exists(s))
+                    {
+                        textBoxAllurePath.Text = s;
+                    }
                 }
+                else
+                {
+                    textBoxAllurePath.Text = config.inputPath;
+                }
+
+
+                if (!System.IO.Path.Exists(config.outputPath))
+                {
+                    textBoxCsvPath.Text = workDir + "\\output";
+                    System.IO.Directory.CreateDirectory(textBoxCsvPath.Text.Trim());
+                }
+                else
+                {
+                    textBoxCsvPath.Text = config.outputPath;
+                }
+
+                
+
+                addLog(" * * * Allure To CSV Converter * * *");
+
             }
             else
             {
+                string frameworkRoot = workDir.Replace("apps\\allure-to-qase-converter", "");
+
+                config.inputPath = frameworkRoot + "\\" + config.frameworkInputPath;
+                config.outputPath = frameworkRoot + "\\" + config.frameworkOutputPath;
+
                 textBoxAllurePath.Text = config.inputPath;
-            }
-
-
-            if (!System.IO.Path.Exists(config.outputPath))
-            {
-                textBoxCsvPath.Text = workDir + "\\output";
-                System.IO.Directory.CreateDirectory(textBoxCsvPath.Text.Trim());
-            }
-            else
-            {
                 textBoxCsvPath.Text = config.outputPath;
-            }
 
-            textBoxCsvFilename.Text = config.outputFilename;
-
-            addLog(" * * * Allure To CSV Converter * * *");
-
-            if (config.mode == "s")
-            {
                 process(config.outputFormat);
 
                 System.Environment.Exit(1);
@@ -376,6 +390,7 @@ namespace AllureToCsvConverter
 
         private void setStealthMode()
         {
+            
             panelC.Visible = false;
             panelB.Visible = false;
             panelA.Visible = false;

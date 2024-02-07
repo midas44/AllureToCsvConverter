@@ -241,13 +241,35 @@ namespace AllureToCsvConverter
         }
 
 
-        public string getLinks()
+        public string getLinks(string format)
         {
             string result = "";
 
             foreach (var link in data.links)
             {
-                result += link.name + lineDivider;
+                if(format == "q")
+                {
+                    if(link.type == "custom")
+                    {
+                        result += "[" + link.name + "](" + link.url + ")" + lineDivider;
+                    }
+                    else
+                    {
+                        result += link.name + lineDivider;
+                    }
+                    
+                }
+                else
+                {
+                    if (link.type == "custom")
+                    {
+                        result += link.name + ": " + link.url  + lineDivider;
+                    }
+                    else
+                    {
+                        result += link.name + lineDivider;
+                    }
+                }               
             }
 
             Form1.form1.addLog("parsed: links = " + result);

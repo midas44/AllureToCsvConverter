@@ -174,7 +174,7 @@ namespace AllureToCsvConverter
                 if (field == "links")
                 {
                     headerRow.Add(field);
-                    contentRow.Add(jsonData.getLinks());
+                    contentRow.Add(jsonData.getLinks(config.outputFormat));
                 }
 
                 if (field == "feature")
